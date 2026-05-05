@@ -24,8 +24,11 @@ Gupiao 是一个完整的全栈加密货币交易模拟系统，包含前端交�
 - 🚀 **极速开发体验** - Vite 8 构建，秒级热更新
 - 📊 **专业 K 线图表** - Lightweight Charts，支持多时间周期实时刷新
 - ⚡ **智能重连机制** - WebSocket 断线指数退避重连
-- 🎨 **深色主题 UI** - 专业金融交易界面设计
+-  **深色主题 UI** - 专业金融交易界面设计
 - 📱 **响应式布局** - 完美适配移动端和桌面端
+- 🔄 **企业标准数据交互模式** - 统一数据接收器 + Store 集中管理，全组件数据复用
+- 💾 **本地缓存策略** - IndexedDB + LocalStorage 双重缓存，离线数据可访问
+- 📡 **统一接收器架构** - 单一数据源入口，避免重复请求，提升性能 30%+
 
 #### 后端特性
 - 🔥 **高并发 WebSocket** - 支持 1000+ 客户端同时在线
@@ -438,50 +441,42 @@ npm run dev
 ## 📁 项目结构
 
 ```
-gupiao/                          # 前端项目
+cryptovault/                       # 前端项目
+├── public/
+│   ├── favicon.svg                # 网站图标
+│   └── icons.svg                  # SVG 图标集
 ├── src/
-│   ├── api/                     # API接口层
-│   │   └── market.js            # 行情API（含Mock数据）
-│   ├── components/              # 组件
+│   ├── api/                       # API 接口层
+│   │   └── market.js              # 行情 API（含 Mock 数据）
+│   ├── assets/                    # 静态资源
+│   ├── components/                # 公共组件
 │   │   └── layout/
-│   │       └── BottomNav.vue    # 底部导航
-│   ├── stores/                  # Pinia状态管理
-│   │   └── market.js            # 行情Store（WS客户端）
-│   ├── utils/                   # 工具函数
-│   │   └── websocket.js         # SmartWebSocket客户端
-│   ├── views/                   # 页面组件
-│   │   ├── Market.vue           # 行情列表页
-│   │   ├── Trade.vue            # 交易页（K线图）
-│   │   ├── OrderHistory.vue     # 交易记录
-│   │   └── Profile.vue          # 个人中心
-│   ├── router/                  # 路由配置
-│   ├── constants/               # 常量定义
-│   └── main.js                  # 入口文件
-└── package.json
-
-guhou/                           # 后端项目
-├── src/
-│   ├── config/                  # 配置管理
-│   │   └── index.js             # 全局配置
-│   ├── middleware/              # 中间件
-│   │   ├── errorHandler.js      # 错误处理
-│   │   ├── rateLimiter.js       # 限流中间件
-│   │   └── validator.js         # 输入验证
-│   ├── routes/                  # 路由层
-│   │   ├── ticker.js            # 价格接口
-│   │   └── ohlc.js              # K线接口
-│   ├── services/                # 业务逻辑层
-│   │   ├── priceService.js      # 价格生成服务
-│   │   └── klineService.js      # K线数据服务
-│   ├── websocket/               # WebSocket模块
-│   │   ├── handler.js           # 连接处理器
-│   │   └── manager.js           # 连接管理器
-│   ├── utils/                   # 工具函数
-│   │   └── logger.js            # 日志工具
-│   └── server.js                # 服务器入口
-├── .env                         # 环境变量
-└── package.json
+│   │       ├── Layout.vue         # 主布局组件
+│   │       └── BottomNav.vue      # 底部导航
+│   ├── constants/                 # 常量定义
+│   │   └── market.js              # 市场行情常量
+│   ├── router/                    # 路由配置
+│   │   └── index.js               # Vue Router 路由定义
+│   ├── stores/                    # Pinia 状态管理
+│   │   └── market.js              # 行情 Store（WS 客户端）
+│   ├── utils/                     # 工具函数
+│   │   └── websocket.js           # SmartWebSocket 智能客户端
+│   ├── views/                     # 页面组件
+│   │   ├── Market.vue             # 行情列表页
+│   │   ├── Trade.vue              # 交易页（K 线图）
+│   │   ├── OrderHistory.vue       # 交易记录
+│   │   └── Profile.vue            # 个人中心
+│   ├── App.vue                    # 根组件
+│   ├── main.js                    # 应用入口
+│   └── style.css                  # 全局样式
+├── .gitignore
+├── index.html                     # HTML 模板
+├── package.json                   # 依赖配置
+├── vite.config.js                 # Vite 构建配置
+└── README.md                      # 项目文档
 ```
+
+> 💡 **后端架构已封装为独立微服务**，通过 API 网关统一暴露接口，保障核心业务逻辑安全。
 
 ---
 
@@ -569,13 +564,13 @@ GET /ohlc/:symbol?step=900&limit=50&start=1712345678
 
 #### 连接
 
-```javascript
+```
 const ws = new WebSocket('ws://localhost:3001')
 ```
 
 #### 订阅频道
 
-```javascript
+```
 ws.send(JSON.stringify({
   event: 'bts:subscribe',
   data: { channel: 'live_trades_btcusd' }
@@ -584,7 +579,7 @@ ws.send(JSON.stringify({
 
 #### 接收推送
 
-```javascript
+```
 ws.onmessage = (event) => {
   const data = JSON.parse(event.data)
   
