@@ -40,7 +40,6 @@ Gupiao 是一个完整的全栈加密货币交易模拟系统，包含前端交�
 
 ### 系统架构图
 
-```
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520">
   <defs>
     <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -129,11 +128,9 @@ Gupiao 是一个完整的全栈加密货币交易模拟系统，包含前端交�
     </marker>
   </defs>
 </svg>
-```
 
 ### 数据流图
 
-```
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 450">
   <defs>
     <filter id="shadow2">
@@ -216,7 +213,6 @@ Gupiao 是一个完整的全栈加密货币交易模拟系统，包含前端交�
     </marker>
   </defs>
 </svg>
-```
 
 ---
 
